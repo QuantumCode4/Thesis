@@ -6,7 +6,6 @@ def compute_spatial_acceptance(x0, y0, theta, phi, accepted_mask, L, D, N_planes
     if not (0 <= plane_index < N_planes):
         raise ValueError(f"The index plane is between 0 and {N_planes - 1}")
 
-    # Propagar a ese plano
     tan_theta = np.tan(theta)
     dx = plane_index * D * tan_theta * np.cos(phi)
     dy = plane_index * D * tan_theta * np.sin(phi)
@@ -32,25 +31,42 @@ def compute_spatial_acceptance(x0, y0, theta, phi, accepted_mask, L, D, N_planes
     return acceptance_xy, edges
 
 def plot_aceptance(x0, y0, theta, phi, accepted_mask,
-    L, D, N_planes, plane_index, NUM_BINS):
+                   L, D, N_planes, plane_index, NUM_BINS):
 
     acceptance_xy, edges = compute_spatial_acceptance(
-    x0, y0, theta, phi, accepted_mask,
-    L, D, N_planes, plane_index, NUM_BINS
+        x0, y0, theta, phi, accepted_mask,
+        L, D, N_planes, plane_index, NUM_BINS
     )
 
-    fig, ax = plt.subplots(figsize=(8, 7))
+    fig, axs = plt.subplots(1, 2, figsize=(14, 6))
+
     extent = [edges[0], edges[-1], edges[0], edges[-1]]
-    im = ax.imshow(
+    im = axs[0].imshow(
         acceptance_xy.T,
         extent=extent,
         cmap='plasma',
         interpolation='nearest',
-        origin='lower', vmin=0, vmax=1
+        origin='lower',
+        vmin=0, vmax=1
     )
-    ax.set_title(f"Hodoscope Aceptance (Spatial Map) in plane {plane_index+1}")
-    ax.set_xlabel('x [cm]')
-    ax.set_ylabel('y [cm]')
-    plt.colorbar(im, ax=ax, label='Aceptance')
+    axs[0].set_title(f"Mapa 2D de Aceptancia - Plano {plane_index+1}")
+    axs[0].set_xlabel('x [cm]')
+    axs[0].set_ylabel('y [cm]')
+
+    plt.colorbar(im, ax=axs[0], label='Aceptancia')
+
+    x_centers = 0.5 * (edges[:-1] + edges[1:])
+    y_centers = 0.5 * (edges[:-1] + edges[1:])
+    X, Y = np.meshgrid(x_centers, y_centers)
+    Z = acceptance_xy.T
+
+    ax3d = fig.add_subplot(122, projection='3d')
+    surf = ax3d.plot_surface(X, Y, Z, cmap='plasma', edgecolor='k', linewidth=0.2, antialiased=True)
+    ax3d.set_title(f"Superficie 3D de Aceptancia - Plano {plane_index+1}")
+    ax3d.set_xlabel('x [cm]')
+    ax3d.set_ylabel('y [cm]')
+    ax3d.set_zlabel('Aceptancia')
+    ax3d.set_zlim(0, 1)
+
     plt.tight_layout()
     plt.show()

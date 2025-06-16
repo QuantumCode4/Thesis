@@ -4,18 +4,17 @@ from tqdm import tqdm
 
 def sample_theta_cosn(N,n):
     samples = []
-    max_batch = 10_000_000  # tamaño máximo de bloque
+    max_batch = 10000000
 
     with tqdm(total=N, desc="Muestreando θ ∝ cos²(θ)") as pbar:
         while len(samples) < N:
             remaining = N - len(samples)
-            n_batch = min(max_batch, int(remaining * 1.5))  # generar un poco más por eficiencia
+            n_batch = min(max_batch, int(remaining * 1.5))
 
             theta_candidates = np.random.uniform(0, np.pi/2, size=n_batch)
             probs = np.cos(theta_candidates) ** n
             accept = theta_candidates[np.random.uniform(0, 1, size=n_batch) < probs]
 
-            # Solo tomar lo necesario
             accepted = accept[:remaining]
             samples.extend(accepted.tolist())
             pbar.update(len(accepted))
@@ -70,18 +69,18 @@ def plot_aceptance(theta, accepted_theta, theta_max, NUM_BINS):
     plt.legend()
     plt.tight_layout()
     plt.show()
-    return None
 
 def plot_theta_xy(theta, phi, accepted_mask, N_planes, D, L, NUM_BINS):
+
     theta_x = np.rad2deg(np.arctan(np.tan(theta) * np.cos(phi)))
     theta_y = np.rad2deg(np.arctan(np.tan(theta) * np.sin(phi)))
 
     accepted_theta_x = theta_x[accepted_mask]
     accepted_theta_y = theta_y[accepted_mask]
 
-    theta_max1 = np.arctan(L / ( (N_planes-1) * D)) # Maximun Projected Angle for counts
+    theta_max1 = np.arctan(L / ((N_planes - 1) * D))
+    bin_edges_2d = np.linspace(-np.rad2deg(theta_max1), np.rad2deg(theta_max1), NUM_BINS)
 
-    bin_edges_2d = np.linspace(-np.rad2deg(theta_max1), np.rad2deg(theta_max1), NUM_BINS)  # degrees
     H_gen, _, _ = np.histogram2d(theta_x, theta_y, bins=(bin_edges_2d, bin_edges_2d))
     H_acc, _, _ = np.histogram2d(accepted_theta_x, accepted_theta_y, bins=(bin_edges_2d, bin_edges_2d))
 
@@ -92,21 +91,33 @@ def plot_theta_xy(theta, phi, accepted_mask, N_planes, D, L, NUM_BINS):
         where=H_gen != 0
     )
 
-    fig, ax = plt.subplots(figsize=(8, 7))
+    fig, axs = plt.subplots(1, 2, figsize=(14, 6))
     extent = [bin_edges_2d[0], bin_edges_2d[-1], bin_edges_2d[0], bin_edges_2d[-1]]
-    im = ax.imshow(
+    im = axs[0].imshow(
         acceptance_2D.T,
-        extent = extent,
+        extent=extent,
         cmap='jet',
         interpolation='nearest',
-        origin= "upper"
+        origin="upper",
+        vmin=0, vmax=1
     )
+    axs[0].set_title(" 2D Angular Aceptance Map")
+    axs[0].set_xlabel(r'$\theta_x$ [grades]')
+    axs[0].set_ylabel(r'$\theta_y$ [grades]')
+    plt.colorbar(im, ax=axs[0], label='Aceptance')
 
-    ax.set_title("Hodoscope Aceptance (Angular Map)")
-    ax.set_xlabel(r'$\theta_x$ [grades]')
-    ax.set_ylabel(r'$\theta_y$ [grades]')
-    plt.colorbar(im, ax=ax, label='Aceptance')
+    theta_x_centers = 0.5 * (bin_edges_2d[:-1] + bin_edges_2d[1:])
+    theta_y_centers = 0.5 * (bin_edges_2d[:-1] + bin_edges_2d[1:])
+    X, Y = np.meshgrid(theta_x_centers, theta_y_centers)
+    Z = acceptance_2D.T
+
+    ax3d = fig.add_subplot(122, projection='3d')
+    surf = ax3d.plot_surface(X, Y, Z, cmap='jet', edgecolor='k', linewidth=0.2, antialiased=True)
+    ax3d.set_title("3D Angular Aceptance Surface")
+    ax3d.set_xlabel(r'$\theta_x$ [grades]')
+    ax3d.set_ylabel(r'$\theta_y$ [grades]')
+    ax3d.set_zlabel('Aceptance')
+    ax3d.set_zlim(0, 1)
+
     plt.tight_layout()
     plt.show()
-
-    return None
