@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 def compute_spatial_acceptance(x0, y0, theta, phi, accepted_mask, L, D, N_planes, plane_index, num_bins):
     if not (0 <= plane_index < N_planes):
-        raise ValueError(f"El índice del plano debe estar entre 0 y {N_planes - 1}")
+        raise ValueError(f"The index plane is between 0 and {N_planes - 1}")
 
     # Propagar a ese plano
     tan_theta = np.tan(theta)
@@ -46,11 +46,11 @@ def plot_aceptance(x0, y0, theta, phi, accepted_mask,
         extent=extent,
         cmap='plasma',
         interpolation='nearest',
-        origin='lower'
+        origin='lower', vmin=0, vmax=1
     )
-    ax.set_title(f"Aceptancia Espacial en Plano {plane_index+1} (z = {plane_index*D} cm)")
+    ax.set_title(f"Hodoscope Aceptance (Spatial Map) in plane {plane_index+1}")
     ax.set_xlabel('x [cm]')
     ax.set_ylabel('y [cm]')
-    plt.colorbar(im, ax=ax, label='Aceptancia Relativa')
+    plt.colorbar(im, ax=ax, label='Aceptance')
     plt.tight_layout()
     plt.show()

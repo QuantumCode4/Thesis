@@ -60,9 +60,9 @@ def plot_aceptance(theta, accepted_theta, theta_max, NUM_BINS):
        width=np.rad2deg(bin_edges[1]-bin_edges[0]),
        edgecolor='black')
 
-    ax.set_title('Aceptancia del Hodoscopio')
-    ax.set_xlabel('Ángulo θ [grados]')
-    ax.set_ylabel('Aceptancia Relativa')
+    ax.set_title('Hodoscope Aceptance')
+    ax.set_xlabel('Angle θ [grades]')
+    ax.set_ylabel('Aceptance')
     ax.grid(True)
     ax.set_xlim(0, 90)
     ax.set_ylim(0)
@@ -102,10 +102,10 @@ def plot_theta_xy(theta, phi, accepted_mask, N_planes, D, L, NUM_BINS):
         origin= "upper"
     )
 
-    ax.set_title("Aceptancia del Hodoscopio")
-    ax.set_xlabel(r'$\theta_x$ [grados]')
-    ax.set_ylabel(r'$\theta_y$ [grados]')
-    plt.colorbar(im, ax=ax, label='Aceptancia Relativa')
+    ax.set_title("Hodoscope Aceptance (Angular Map)")
+    ax.set_xlabel(r'$\theta_x$ [grades]')
+    ax.set_ylabel(r'$\theta_y$ [grades]')
+    plt.colorbar(im, ax=ax, label='Aceptance')
     plt.tight_layout()
     plt.show()
 
