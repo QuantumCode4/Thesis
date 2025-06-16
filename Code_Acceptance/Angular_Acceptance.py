@@ -102,8 +102,9 @@ def plot_theta_xy(theta, phi, accepted_mask, N_planes, D, L, NUM_BINS):
 
     # --- Subplot 2D ---
     ax2d = fig.add_subplot(1, 2, 1)
-    im = ax2d.imshow(acceptance_2D.T, extent=extent, cmap='jet', origin="upper")
-    ax2d.set_title("2D Angular Acceptance Map")
+    im = ax2d.imshow(acceptance_2D.T, extent=extent, cmap='jet', interpolation='nearest',
+        origin='lower')
+    ax2d.set_title("Angular Acceptance Map")
     ax2d.set_xlabel(r'$\theta_x$ [grades]')
     ax2d.set_ylabel(r'$\theta_y$ [grades]')
     plt.colorbar(im, ax=ax2d, label='Acceptance')
@@ -111,7 +112,7 @@ def plot_theta_xy(theta, phi, accepted_mask, N_planes, D, L, NUM_BINS):
 # --- Subplot 3D ---
     ax3d = fig.add_subplot(1, 2, 2, projection='3d')
     surf = ax3d.plot_surface(X, Y, Z, cmap='jet', edgecolor='none')
-    ax3d.set_title("3D Angular Acceptance Surface")
+    ax3d.set_title("Angular Acceptance Surface")
     ax3d.set_xlabel(r'$\theta_x$ [grades]')
     ax3d.set_ylabel(r'$\theta_y$ [grades]')
     ax3d.set_zlabel("Acceptance")

@@ -48,10 +48,9 @@ def plot_acceptance(x0, y0, theta, phi, accepted_mask,
         extent=extent,
         cmap='plasma',
         interpolation='nearest',
-        origin='lower',
-        vmin=0, vmax=1
+        origin='lower'
     )
-    ax2d.set_title(f"2D Spatial Acceptance Map - Plane {plane_index + 1}")
+    ax2d.set_title(f"Spatial Acceptance Map - Plane {plane_index + 1}")
     ax2d.set_xlabel('x [cm]')
     ax2d.set_ylabel('y [cm]')
     plt.colorbar(im, ax=ax2d, label='Acceptance')
@@ -66,14 +65,12 @@ def plot_acceptance(x0, y0, theta, phi, accepted_mask,
         X, Y, Z,
         cmap='plasma',
         edgecolor='k',
-        linewidth=0.2,
-        antialiased=True
+        linewidth=0.2
     )
-    ax3d.set_title(f"3D Spatial Acceptance Surface - Plane {plane_index + 1}")
+    ax3d.set_title(f"Spatial Acceptance Surface - Plane {plane_index + 1}")
     ax3d.set_xlabel('x [cm]')
     ax3d.set_ylabel('y [cm]')
     ax3d.set_zlabel('Acceptance')
-    ax3d.set_zlim(0, 1)
 
     plt.tight_layout()
     plt.show()
