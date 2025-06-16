@@ -59,9 +59,9 @@ def plot_aceptance(theta, accepted_theta, theta_max, NUM_BINS):
        width=np.rad2deg(bin_edges[1]-bin_edges[0]),
        edgecolor='black')
 
-    ax.set_title('Hodoscope Aceptance')
+    ax.set_title('Hodoscope Acceptance')
     ax.set_xlabel('Angle θ [grades]')
-    ax.set_ylabel('Aceptance')
+    ax.set_ylabel('Acceptance')
     ax.grid(True)
     ax.set_xlim(0, 90)
     ax.set_ylim(0)
@@ -91,33 +91,30 @@ def plot_theta_xy(theta, phi, accepted_mask, N_planes, D, L, NUM_BINS):
         where=H_gen != 0
     )
 
-    fig, axs = plt.subplots(1, 2, figsize=(14, 6))
+    fig = plt.figure(figsize=(12, 6))
     extent = [bin_edges_2d[0], bin_edges_2d[-1], bin_edges_2d[0], bin_edges_2d[-1]]
-    im = axs[0].imshow(
-        acceptance_2D.T,
-        extent=extent,
-        cmap='jet',
-        interpolation='nearest',
-        origin="upper",
-        vmin=0, vmax=1
-    )
-    axs[0].set_title(" 2D Angular Aceptance Map")
-    axs[0].set_xlabel(r'$\theta_x$ [grades]')
-    axs[0].set_ylabel(r'$\theta_y$ [grades]')
-    plt.colorbar(im, ax=axs[0], label='Aceptance')
+
 
     theta_x_centers = 0.5 * (bin_edges_2d[:-1] + bin_edges_2d[1:])
     theta_y_centers = 0.5 * (bin_edges_2d[:-1] + bin_edges_2d[1:])
     X, Y = np.meshgrid(theta_x_centers, theta_y_centers)
     Z = acceptance_2D.T
 
-    ax3d = fig.add_subplot(122, projection='3d')
-    surf = ax3d.plot_surface(X, Y, Z, cmap='jet', edgecolor='k', linewidth=0.2, antialiased=True)
-    ax3d.set_title("3D Angular Aceptance Surface")
+    # --- Subplot 2D ---
+    ax2d = fig.add_subplot(1, 2, 1)
+    im = ax2d.imshow(acceptance_2D.T, extent=extent, cmap='jet', origin="upper")
+    ax2d.set_title("2D Angular Acceptance Map")
+    ax2d.set_xlabel(r'$\theta_x$ [grades]')
+    ax2d.set_ylabel(r'$\theta_y$ [grades]')
+    plt.colorbar(im, ax=ax2d, label='Acceptance')
+
+# --- Subplot 3D ---
+    ax3d = fig.add_subplot(1, 2, 2, projection='3d')
+    surf = ax3d.plot_surface(X, Y, Z, cmap='jet', edgecolor='none')
+    ax3d.set_title("3D Angular Acceptance Surface")
     ax3d.set_xlabel(r'$\theta_x$ [grades]')
     ax3d.set_ylabel(r'$\theta_y$ [grades]')
-    ax3d.set_zlabel('Aceptance')
-    ax3d.set_zlim(0, 1)
+    ax3d.set_zlabel("Acceptance")
 
     plt.tight_layout()
     plt.show()
