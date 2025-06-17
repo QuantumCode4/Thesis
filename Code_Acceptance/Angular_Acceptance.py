@@ -6,7 +6,7 @@ def sample_theta_cosn(N,n):
     samples = []
     max_batch = 10000000
 
-    with tqdm(total=N, desc="Muestreando θ ∝ cos²(θ)") as pbar:
+    with tqdm(total=N, desc= f"Sampling θ with cos^{n}(θ)") as pbar:
         while len(samples) < N:
             remaining = N - len(samples)
             n_batch = min(max_batch, int(remaining * 1.5))
@@ -98,9 +98,8 @@ def plot_theta_xy(theta, phi, accepted_mask, N_planes, D, L, NUM_BINS):
     theta_x_centers = 0.5 * (bin_edges_2d[:-1] + bin_edges_2d[1:])
     theta_y_centers = 0.5 * (bin_edges_2d[:-1] + bin_edges_2d[1:])
     X, Y = np.meshgrid(theta_x_centers, theta_y_centers)
-    Z = acceptance_2D.T
-
-    # --- Subplot 2D ---
+    Z = acceptance_2D
+    
     ax2d = fig.add_subplot(1, 2, 1)
     im = ax2d.imshow(acceptance_2D.T, extent=extent, cmap='jet', interpolation='nearest',
         origin='lower')
@@ -109,7 +108,6 @@ def plot_theta_xy(theta, phi, accepted_mask, N_planes, D, L, NUM_BINS):
     ax2d.set_ylabel(r'$\theta_y$ [grades]')
     plt.colorbar(im, ax=ax2d, label='Acceptance')
 
-# --- Subplot 3D ---
     ax3d = fig.add_subplot(1, 2, 2, projection='3d')
     surf = ax3d.plot_surface(X, Y, Z, cmap='jet', edgecolor='none')
     ax3d.set_title("Angular Acceptance Surface")

@@ -58,7 +58,7 @@ def plot_acceptance(x0, y0, theta, phi, accepted_mask,
     x_centers = 0.5 * (edges[:-1] + edges[1:])
     y_centers = 0.5 * (edges[:-1] + edges[1:])
     X, Y = np.meshgrid(x_centers, y_centers)
-    Z = acceptance_xy.T
+    Z = acceptance_xy
 
     ax3d = fig.add_subplot(1, 2, 2, projection='3d')
     surf = ax3d.plot_surface(
