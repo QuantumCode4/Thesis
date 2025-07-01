@@ -1,25 +1,48 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+from scipy.interpolate import interp1d
 
-def sample_theta_cosn(N,n):
-    samples = []
-    max_batch = 10000000
+def sample_theta_cosn(N, n, method):
+    if method == "rejection":
+        samples = []
+        max_batch = 10_000_000
 
-    with tqdm(total=N, desc= f"Sampling θ with cos^{n}(θ)") as pbar:
-        while len(samples) < N:
-            remaining = N - len(samples)
-            n_batch = min(max_batch, int(remaining * 1.5))
+        with tqdm(total=N, desc=f"Sampling θ with cos^{n}(θ) [rejection]") as pbar:
+            while len(samples) < N:
+                remaining = N - len(samples)
+                n_batch = min(max_batch, int(remaining * 1.5))
 
-            theta_candidates = np.random.uniform(0, np.pi/2, size=n_batch)
-            probs = np.cos(theta_candidates) ** n
-            accept = theta_candidates[np.random.uniform(0, 1, size=n_batch) < probs]
+                theta_candidates = np.random.uniform(0, np.pi/2, size=n_batch)
+                probs = np.cos(theta_candidates) ** n
 
-            accepted = accept[:remaining]
-            samples.extend(accepted.tolist())
-            pbar.update(len(accepted))
+                uniform_randoms = np.random.uniform(0, 1, size=n_batch)
+                accepted = theta_candidates[uniform_randoms < probs]
 
-    return np.array(samples)
+                accepted = accepted[:remaining]
+                samples.extend(accepted.tolist())
+                pbar.update(len(accepted))
+
+        return np.array(samples)
+
+    elif method == "cumulative":
+        print(f"Sampling θ with cos^{n}(θ) [cumulative]")
+        N_table = 10000
+
+        theta_vals = np.linspace(0, np.pi/2, N_table)
+        pdf_vals = np.cos(theta_vals) ** n
+
+        cdf_vals = np.cumsum(pdf_vals)
+        cdf_vals /= cdf_vals[-1]
+
+        inverse_cdf = interp1d(cdf_vals, theta_vals, kind='linear', bounds_error=False, fill_value=(0, np.pi/2))
+        u = np.random.uniform(0, 1, N)
+        samples = inverse_cdf(u)
+
+        return np.array(samples)
+
+    else:
+        raise ValueError("El parámetro 'method' debe ser 'cumulative' o 'rejection'")
 
 def generate_muons(N_muons, L, D, N_planes, n):
     phi = np.random.uniform(0, 2 * np.pi, N_muons)
