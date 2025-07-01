@@ -44,9 +44,9 @@ def sample_theta_cosn(N, n, method):
     else:
         raise ValueError("El parámetro 'method' debe ser 'cumulative' o 'rejection'")
 
-def generate_muons(N_muons, L, D, N_planes, n):
+def generate_muons(N_muons, L, D, N_planes, n, method):
     phi = np.random.uniform(0, 2 * np.pi, N_muons)
-    theta = sample_theta_cosn(N_muons,n)
+    theta = sample_theta_cosn(N_muons,n,method)
     tan_theta = np.tan(theta)
 
     x0 = np.random.uniform(-L/2, L/2, N_muons)
